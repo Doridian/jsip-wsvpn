@@ -1,9 +1,9 @@
 import { WSVPNJSIP } from "./bridge";
 import { WSVPNWebTransport, WSVPNErrorEvent } from "@wsvpn/web";
-import { enableProtocols } from "@doridian/jsip";
+import { initialize } from "@doridian/jsip";
 
 export async function main() {
-    enableProtocols();
+    initialize();
 
     const transport = new WSVPNWebTransport("https://local.foxden.network:9000");
     transport.addEventListener("error", (ev: WSVPNErrorEvent) => {

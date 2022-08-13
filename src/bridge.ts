@@ -1,11 +1,6 @@
 import { IP_NONE } from "@doridian/jsip/dist/ethernet/ip/address";
-import { addRoute, flushRoutes } from "@doridian/jsip/dist/ethernet/ip/router";
 import { IPNet, IPNET_ALL } from "@doridian/jsip/dist/ethernet/ip/subnet";
-import { addDHCP } from "@doridian/jsip/dist/ethernet/ip/udp/dhcp/stack";
-import { addDNSServer, flushDNSServers } from "@doridian/jsip/dist/ethernet/ip/udp/dns/stack";
-import { Interface } from "@doridian/jsip/dist/interface/index";
-import { logDebug } from "@doridian/jsip/dist/util/log";
-import { handlePacket } from "@doridian/jsip/dist/util/packet";
+import { Interface } from "@doridian/jsip";
 import { InitParameters, WSVPNBase } from "@wsvpn/web";
 
 let maxNumber = 0;
@@ -16,7 +11,7 @@ export class WSVPNJSIP extends Interface {
     constructor(private adapter: WSVPNBase) {
         super(`wsvpn${maxNumber++}`);
         adapter.addEventListener("packet", (ev) => {
-            handlePacket(ev.packet.buffer.slice(ev.packet.byteOffset, ev.packet.byteLength), this);
+            this.handlePacket(ev.packet.buffer.slice(ev.packet.byteOffset, ev.packet.byteLength));
         });
     }
 
@@ -25,7 +20,7 @@ export class WSVPNJSIP extends Interface {
         await this.handleInit(init);
     }
 
-    public sendRaw(msg: ArrayBuffer) {
+    public sendPacket(msg: ArrayBuffer) {
         this.adapter.sendPacket(new Uint8Array(msg));
     }
 
@@ -33,7 +28,7 @@ export class WSVPNJSIP extends Interface {
         return this.init!.mtu;
     }
 
-    public useEthernet() {
+    public isEthernet() {
         return this.init!.mode === "TAP";
     }
 
@@ -42,23 +37,23 @@ export class WSVPNJSIP extends Interface {
 
         let needDHCP = false;
 
-        flushRoutes(this);
-        flushDNSServers(this);
+        this.clearRoutes();
+        this.clearDNSServers();
 
         if (!params.do_ip_config) {
             needDHCP = true;
         } else {
             const subnet = IPNet.fromString(params.ip_address);
             this.setIP(subnet.getCreationIP());
-            addRoute(subnet, IP_NONE, this);
+            this.addRoute(subnet, IP_NONE);
             const serverIp = subnet.getBaseIP();
-            addRoute(IPNET_ALL, serverIp, this);
-            addDNSServer(serverIp, this);
+            this.addRoute(IPNET_ALL, serverIp);
+            this.addDNSServer(serverIp);
         }
 
         if (needDHCP) {
-            logDebug(`${this.getName()} starting DHCP procedure...`);
-            return addDHCP(this).negotiate();
+            console.info(`${this.getName()} starting DHCP procedure...`);
+            return this.addDHCP().negotiate();
         } else {
             return Promise.resolve();
         }

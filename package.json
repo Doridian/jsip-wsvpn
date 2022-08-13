@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/Doridian/webnet#readme",
   "dependencies": {
-    "@doridian/jsip": "^1.0.1",
-    "@wsvpn/web": "^1.0.0"
+    "@doridian/jsip": "^1.0.4",
+    "@wsvpn/web": "^1.0.2"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
