@@ -1,4 +1,3 @@
-import { IP_NONE } from "@doridian/jsip/dist/ethernet/ip/address";
 import { IPNet, IPNET_ALL } from "@doridian/jsip/dist/ethernet/ip/subnet";
 import { Interface } from "@doridian/jsip";
 import { InitParameters, WSVPNBase } from "@wsvpn/js";
@@ -45,7 +44,7 @@ export class WSVPNJSIP extends Interface {
         } else {
             const subnet = IPNet.fromString(params.ip_address);
             this.setIP(subnet.getCreationIP());
-            this.addRoute(subnet, IP_NONE);
+            this.addRoute(subnet, undefined);
             const serverIp = subnet.getBaseIP();
             this.addRoute(IPNET_ALL, serverIp);
             this.addDNSServer(serverIp);
