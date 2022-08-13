@@ -1,5 +1,5 @@
 {
-  "name": "@doridian/jsip_wsvpn",
+  "name": "@doridian/jsip-wsvpn",
   "version": "1.0.0",
   "private": false,
   "description": "",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Doridian/webnet.git"
+    "url": "git+https://github.com/Doridian/jsip-wsvpn.git"
   },
   "author": "Doridian",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/Doridian/webnet/issues"
+    "url": "https://github.com/Doridian/jsip-wsvpn/issues"
   },
-  "homepage": "https://github.com/Doridian/webnet#readme",
+  "homepage": "https://github.com/Doridian/jsip-wsvpn#readme",
   "dependencies": {
     "@doridian/jsip": "^1.0.5",
     "@wsvpn/web": "^1.0.2"
