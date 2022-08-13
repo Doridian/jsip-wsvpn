@@ -1,7 +1,7 @@
 import { IP_NONE } from "@doridian/jsip/dist/ethernet/ip/address";
 import { IPNet, IPNET_ALL } from "@doridian/jsip/dist/ethernet/ip/subnet";
 import { Interface } from "@doridian/jsip";
-import { InitParameters, WSVPNBase } from "@wsvpn/web";
+import { InitParameters, WSVPNBase } from "@wsvpn/js";
 
 let maxNumber = 0;
 

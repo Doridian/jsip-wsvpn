@@ -1,5 +1,5 @@
 import { WSVPNJSIP } from "./bridge";
-import { WSVPNWebTransport, WSVPNErrorEvent } from "@wsvpn/web";
+import { WSVPNWebTransport, WSVPNErrorEvent } from "@wsvpn/js";
 import { initialize } from "@doridian/jsip";
 
 export async function main() {
