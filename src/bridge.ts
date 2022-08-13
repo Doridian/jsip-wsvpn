@@ -1,6 +1,7 @@
-import { IPNet, IPNET_ALL } from "@doridian/jsip/dist/ethernet/ip/subnet";
+import { IPNet, IPNET_ALL } from "@doridian/jsip/lib/ethernet/ip/subnet.js";
 import { Interface } from "@doridian/jsip";
 import { InitParameters, WSVPNBase } from "@wsvpn/js";
+import { Metric } from "@doridian/jsip/lib/ethernet/ip/router.js";
 
 let maxNumber = 0;
 
@@ -10,7 +11,7 @@ export class WSVPNJSIP extends Interface {
     constructor(private adapter: WSVPNBase) {
         super(`wsvpn${maxNumber++}`);
         adapter.addEventListener("packet", (ev) => {
-            this.handlePacket(ev.packet.buffer.slice(ev.packet.byteOffset, ev.packet.byteLength));
+            this.handlePacket(ev.packet);
         });
     }
 
@@ -19,8 +20,25 @@ export class WSVPNJSIP extends Interface {
         await this.handleInit(init);
     }
 
+    public async close() {
+        this.remove();
+        await this.close();
+    }
+
+    public getServerIP() {
+        return this.subnet?.getBaseIP();
+    }
+
+    public mustGetserverIP() {
+        const serverIp = this.getServerIP();
+        if (!serverIp) {
+            throw Error("Server IP is unset");
+        }
+        return serverIp;
+    }
+
     public sendPacket(msg: ArrayBuffer) {
-        this.adapter.sendPacket(new Uint8Array(msg));
+        this.adapter.sendPacket(msg);
     }
 
     public getMTU() {
@@ -31,31 +49,47 @@ export class WSVPNJSIP extends Interface {
         return this.init!.mode === "TAP";
     }
 
-    private handleInit(params: InitParameters) {
-        this.init = params;
+    public addServerDNS() {
+        this.addDNSServer(this.mustGetserverIP());
+    }
 
-        let needDHCP = false;
+    public removeServerDNS() {
+        const serverIp = this.getServerIP();
+        if (serverIp) {
+            this.removeDNSServer(serverIp);
+        }
+    }
+
+    private _makeDefaultRoute() {
+        return { subnet: IPNET_ALL, router: this.mustGetserverIP(), metric: Metric.DHCPDefault };
+    }
+
+    public addServerDefaultGateway() {
+        this.addRoute(this._makeDefaultRoute());
+    }
+
+    public removeDefaultGateway() {
+        this.removeRoute(this._makeDefaultRoute());
+    }
+
+    private async handleInit(params: InitParameters) {
+        this.init = params;
 
         this.clearRoutes();
         this.clearDNSServers();
 
         if (!params.do_ip_config) {
-            needDHCP = true;
-        } else {
-            const subnet = IPNet.fromString(params.ip_address);
-            this.setIP(subnet.getCreationIP());
-            this.addRoute(subnet, undefined);
-            const serverIp = subnet.getBaseIP();
-            this.addRoute(IPNET_ALL, serverIp);
-            this.addDNSServer(serverIp);
-        }
-
-        if (needDHCP) {
             console.info(`${this.getName()} starting DHCP procedure...`);
             return this.addDHCP().negotiate();
-        } else {
-            return Promise.resolve();
         }
+
+        this.removeDHCP();
+
+        const subnet = IPNet.fromString(params.ip_address);
+        this.setSubnet(subnet);
+        this.setIP(subnet.getCreationIP());
+
+        this.add();
     }
 }
 
