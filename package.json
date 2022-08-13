@@ -20,7 +20,7 @@
   "homepage": "https://github.com/Doridian/jsip-wsvpn#readme",
   "dependencies": {
     "@doridian/jsip": "^1.0.5",
-    "@wsvpn/web": "^1.0.2"
+    "@wsvpn/js": "^1.0.3"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
