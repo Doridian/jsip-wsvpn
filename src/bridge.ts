@@ -2,6 +2,8 @@ import { IPNet, IPNET_ALL } from "@doridian/jsip/lib/ethernet/ip/subnet.js";
 import { Interface } from "@doridian/jsip";
 import { InitParameters, WSVPNBase } from "@wsvpn/js";
 import { Metric } from "@doridian/jsip/lib/ethernet/ip/router.js";
+import { ICMPPkt } from "@doridian/jsip/lib/ethernet/ip/icmp/index.js";
+import { sendPacketTo } from "@doridian/jsip/lib/ethernet/ip/send.js";
 
 let maxNumber = 0;
 
@@ -26,7 +28,7 @@ export class WSVPNJSIP extends Interface {
     }
 
     public getServerIP() {
-        return this.subnet?.getBaseIP();
+        return this.subnet?.getIP(1);
     }
 
     public mustGetserverIP() {
@@ -90,6 +92,12 @@ export class WSVPNJSIP extends Interface {
         this.setIP(subnet.getCreationIP());
 
         this.add();
+
+        const icmp = new ICMPPkt();
+        icmp.type = 8;
+        icmp.code = 0;
+        icmp.rest = 0;
+        icmp.data = new Uint8Array([1,2,3,4]);
+        sendPacketTo(this.mustGetserverIP(), icmp);
     }
 }
-
