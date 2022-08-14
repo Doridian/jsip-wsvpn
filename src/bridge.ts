@@ -6,7 +6,8 @@ import { Metric } from "@doridian/jsip/lib/ethernet/ip/router.js";
 let maxNumber = 0;
 
 export class WSVPNJSIP extends Interface {
-    private init?: InitParameters = undefined;
+    private isEthernetMode: boolean = false;
+    private mtu: number = 1000;
 
     constructor(private adapter: WSVPNBase) {
         super(`wsvpn${maxNumber++}`);
@@ -42,11 +43,11 @@ export class WSVPNJSIP extends Interface {
     }
 
     public getMTU() {
-        return this.init!.mtu;
+        return this.mtu;
     }
 
     public isEthernet() {
-        return this.init!.mode === "TAP";
+        return this.isEthernetMode;
     }
 
     public addServerDNS() {
@@ -73,7 +74,8 @@ export class WSVPNJSIP extends Interface {
     }
 
     private async handleInit(params: InitParameters) {
-        this.init = params;
+        this.mtu = params.mtu;
+        this.isEthernetMode = params.mode === "TAP";
 
         this.clearRoutes();
         this.clearDNSServers();
