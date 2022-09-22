@@ -5,7 +5,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rimraf dist && webpack && cp src/*.html dist/"
+    "build": "rimraf dist && webpack && cp src/*.html dist/ && cp -r novnc dist/"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/Doridian/jsip-wsvpn#readme",
   "dependencies": {
     "@doridian/jsip": "^1.5.3",
-    "@wsvpn/js": "^1.4.1"
+    "@wsvpn/js": "^1.4.3"
   },
   "devDependencies": {
     "rimraf": "3.0.2",

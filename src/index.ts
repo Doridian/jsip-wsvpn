@@ -1,11 +1,16 @@
 import { WSVPNJSIP } from "./bridge";
-import { WSVPNWebTransport, WSVPNErrorEvent } from "@wsvpn/js";
+import { WSVPNErrorEvent, WSVPNWebSocket } from "@wsvpn/js";
 import { initialize } from "@doridian/jsip";
+import { enableTCP, TCPConn } from "@doridian/jsip/lib/ethernet/ip/tcp/stack";
+import { dnsResolveOrIp } from "@doridian/jsip/lib/ethernet/ip/udp/dns/stack";
+
+const win = (window as any);
 
 export async function main() {
     initialize();
+    enableTCP();
 
-    const transport = new WSVPNWebTransport("https://local.foxden.network:9000");
+    const transport = new WSVPNWebSocket("ws://10.99.10.1:9000");
     transport.addEventListener("error", (ev: WSVPNErrorEvent) => {
         console.error("ERR", ev.error);
     });
@@ -16,7 +21,11 @@ export async function main() {
     const iface = new WSVPNJSIP(transport);
 
     await iface.connect();
+    await iface.addServerDefaultGateway();
     console.log("Connected!");
+
+    win.TCPConn = TCPConn;
+    win.dnsResolveOrIp = dnsResolveOrIp;
 }
 
 main().catch(e => console.error(e));
