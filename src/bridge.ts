@@ -12,12 +12,7 @@ export class WSVPNJSIP extends Interface {
     constructor(private adapter: WSVPNBase) {
         super(`wsvpn${maxNumber++}`);
         adapter.addEventListener("packet", (ev) => {
-            try {
-                this.handlePacket(ev.packet);
-            } catch (e) {
-                console.error(e);
-                console.log(ev.packet);
-            }
+            this.handlePacket(ev.packet);
         });
     }
 
