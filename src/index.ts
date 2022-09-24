@@ -3,7 +3,7 @@ import { WSVPNErrorEvent, WSVPNWebSocket } from "@wsvpn/js";
 import { initialize } from "@doridian/jsip";
 import { enableTCP, enableTCPEcho, TCPConn } from "@doridian/jsip/lib/ethernet/ip/tcp/stack";
 import { dnsResolveOrIp } from "@doridian/jsip/lib/ethernet/ip/udp/dns/stack";
-import { IPAddr } from "@doridian/jsip/lib/ethernet/ip/address";
+//import { IPAddr } from "@doridian/jsip/lib/ethernet/ip/address";
 
 const win = (window as any);
 
@@ -29,10 +29,10 @@ export async function main() {
     win.TCPConn = TCPConn;
     win.dnsResolveOrIp = dnsResolveOrIp;
 
-    dnsResolveOrIp('192.168.3.1').then(ip => {
+    /*dnsResolveOrIp('192.168.3.1').then(ip => {
         const conn = new TCPConn();
         conn.connect(ip as IPAddr, 1337);
-    });
+    });*/
 }
 
 main().catch(e => console.error(e));
