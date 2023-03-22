@@ -22,7 +22,7 @@
     "@wsvpn/js": "^1.4.3"
   },
   "devDependencies": {
-    "rimraf": "4.4.0",
+    "rimraf": "4.4.1",
     "ts-loader": "9.4.2",
     "typescript": "5.0.2",
     "webpack": "5.76.3",
